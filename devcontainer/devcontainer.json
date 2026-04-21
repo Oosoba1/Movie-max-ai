@@ -1,0 +1,25 @@
+{
+  "name": "MovieMax (Python + PostgreSQL)",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/moviemax-semantic-search",
+  "forwardPorts": [5000, 5432],
+  "postCreateCommand": "pip install -r requirements.txt && sudo apt-get update ; sudo apt-get install -y postgresql-client",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python"
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance"
+      ]
+    }
+  },
+  "containerEnv": {
+    "PGHOST": "db",
+    "PGUSER": "postgres",
+    "PGPASSWORD": "postgres",
+    "PGDATABASE": "movies_db"
+  }
+}
