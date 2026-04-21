@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieMax</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!--
+        Home page overview:
+        - introduces the project
+        - gives the user a direct search box
+        - gives quick filter controls for a more structured search
+
+        Current project role:
+        - this page still supports the classic browse/search flow
+        - later, the main search box can be repurposed for natural-language
+          prompts that are translated into SQL by the AI layer
+    -->
+    <div class="page-shell">
+        <div class="container">
+            <section class="hero">
+                <div class="hero-media" aria-hidden="true">
+                    <video class="hero-video" autoplay muted loop playsinline>
+                        <source src="{{ url_for('static', filename='videos/cinema-bg.mp4') }}" type="video/mp4">
+                    </video>
+                    <div class="hero-video-overlay"></div>
+                </div>
+
+                <div class="hero-copy">
+                    <p class="eyebrow">MOVIEMAX</p>
+                    <h1>Press play on something better.</h1>
+                    <p class="intro">
+                        Skip the endless scrolling. Search movies by title, cast, director, genre, year, or plot and find something worth watching.
+                    </p>
+
+                    <form action="{{ url_for('search') }}" method="get" class="search-form hero-search">
+                        <input
+                            type="text"
+                            name="q"
+                            placeholder="Search by title, cast, director, genre, year, or plot..."
+                            required
+                        >
+                        <button type="submit">Search</button>
+                    </form>
+
+                    <div class="catalog-actions">
+                        <a href="{{ url_for('search') }}" class="catalog-link">Show All Movies</a>
+                    </div>
+
+                </div>
+
+            </section>
+        </div>
+    </div>
+</body>
+</html>

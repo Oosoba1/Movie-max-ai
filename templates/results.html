@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieMax | Browse Movies</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!--
+        Results page overview:
+        - shows the main natural-language search box again so the user can refine results
+        - lists matching movies
+        - includes pagination for larger result sets
+
+        Current project role:
+        - this page is driven by the search service
+        - if the backend search changes to AI text-to-SQL later, this template
+          can mostly stay the same because it only cares about the result data
+    -->
+    <div class="page-shell">
+    <div class="container results-shell">
+        <h1>MovieMax</h1>
+
+        <div class="filter-panel">
+            <form action="{{ url_for('search') }}" method="get" class="filter-form">
+                <div class="filter-field">
+                    <label for="results-query">Describe what you want to watch</label>
+                    <input
+                        id="results-query"
+                        type="text"
+                        name="q"
+                        value="{{ query }}"
+                        placeholder="Try: girls movie based in new york"
+                    >
+                </div>
+
+                <div class="filter-actions">
+                    <button type="submit">Search Movies</button>
+                    <a href="{{ url_for('search') }}" class="catalog-link">Show All Movies</a>
+                    <a href="{{ url_for('home') }}" class="secondary-link">Back Home</a>
+                </div>
+            </form>
+        </div>
+
+        {% if error_message %}
+            <div class="message error">{{ error_message }}</div>
+        {% elif movies %}
+            <p class="result-count">
+                Showing {{ movies|length }} of {{ total_results }} movie{{ '' if total_results == 1 else 's' }}
+                {% if query %}
+                    for "<strong>{{ query }}</strong>"
+                {% endif %}
+            </p>
+
+            {% for movie in movies %}
+                <div class="movie-card">
+                    <div class="movie-poster">
+                        <span class="poster-year">{{ movie.release_year or 'N/A' }}</span>
+                        <div class="poster-title-block">
+                            <span class="poster-title">{{ movie.title }}</span>
+                            <span class="poster-subtitle">{{ movie.genre or 'Movie' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="movie-info">
+                        <h2>
+                            <a href="{{ url_for('movie_detail', movie_id=movie.id) }}">{{ movie.title }}</a>
+                            {% if movie.release_year %}
+                                <span class="muted">({{ movie.release_year }})</span>
+                            {% endif %}
+                        </h2>
+
+                        <div class="tag-row">
+                            <span class="info-tag">{{ movie.origin or 'Unknown Origin' }}</span>
+                            <span class="info-tag">{{ movie.genre or 'Unknown Genre' }}</span>
+                        </div>
+
+                        <p><strong>Director:</strong> {{ movie.director or 'N/A' }}</p>
+                        <p><strong>Cast:</strong> {{ movie.cast_members or 'N/A' }}</p>
+                        <p>
+                            <a href="{{ url_for('movie_detail', movie_id=movie.id) }}" class="details-link">View full details</a>
+                        </p>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div class="pagination-bar">
+                {% if has_previous %}
+                    <a
+                        class="pagination-link"
+                        href="{{ url_for('search', q=query, page=current_page - 1) }}"
+                    >
+                        Previous
+                    </a>
+                {% endif %}
+
+                <div class="pagination-numbers">
+                    {% if 1 not in visible_pages %}
+                        <a
+                            class="pagination-link"
+                            href="{{ url_for('search', q=query, page=1) }}"
+                        >
+                            1
+                        </a>
+                        {% if visible_pages[0] > 2 %}
+                            <span class="pagination-dots">...</span>
+                        {% endif %}
+                    {% endif %}
+
+                    {% for page_number in visible_pages %}
+                        {% if page_number == current_page %}
+                            <span class="pagination-link active-page">{{ page_number }}</span>
+                        {% else %}
+                            <a
+                                class="pagination-link"
+                                href="{{ url_for('search', q=query, page=page_number) }}"
+                            >
+                                {{ page_number }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if total_pages not in visible_pages %}
+                        {% if visible_pages[-1] < total_pages - 1 %}
+                            <span class="pagination-dots">...</span>
+                        {% endif %}
+                        <a
+                            class="pagination-link"
+                            href="{{ url_for('search', q=query, page=total_pages) }}"
+                        >
+                            {{ total_pages }}
+                        </a>
+                    {% endif %}
+                </div>
+
+                <span class="pagination-status">Page {{ current_page }} of {{ total_pages }}</span>
+
+                {% if has_next %}
+                    <a
+                        class="pagination-link"
+                        href="{{ url_for('search', q=query, page=current_page + 1) }}"
+                    >
+                        Next
+                    </a>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="message">No movies were found with the current search or filters.</div>
+        {% endif %}
+    </div>
+    </div>
+</body>
+</html>

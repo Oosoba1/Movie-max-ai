@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieMax | {{ movie.title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!--
+        Movie detail page overview:
+        - shows one movie record in a more readable layout
+        - presents the same field names the rest of the UI already uses
+
+        Why this page is useful:
+        - keeps search results lightweight
+        - gives the project a dedicated detail view for plot and metadata
+    -->
+    <div class="page-shell">
+    <div class="container">
+        <p><a href="{{ url_for('home') }}">Home</a></p>
+
+        <div class="detail-layout">
+            <aside class="detail-poster">
+                <span class="poster-year">{{ movie.release_year or 'N/A' }}</span>
+                <div class="poster-title-block">
+                    <span class="poster-title">{{ movie.title }}</span>
+                    <span class="poster-subtitle">{{ movie.genre or 'Movie' }}</span>
+                </div>
+            </aside>
+
+            <section class="card detail-card">
+                <h1>{{ movie.title }}</h1>
+
+                <div class="tag-row">
+                    <span class="info-tag">{{ movie.origin or 'Unknown Origin' }}</span>
+                    <span class="info-tag">{{ movie.genre or 'Unknown Genre' }}</span>
+                    <span class="info-tag">{{ movie.release_year or 'No Year' }}</span>
+                </div>
+
+                <p><strong>Release Year:</strong> {{ movie.release_year or 'N/A' }}</p>
+                <p><strong>Origin:</strong> {{ movie.origin or 'N/A' }}</p>
+                <p><strong>Director:</strong> {{ movie.director or 'N/A' }}</p>
+                <p><strong>Cast Members:</strong> {{ movie.cast_members or 'N/A' }}</p>
+
+                <p>
+                    <strong>Wikipedia Page:</strong>
+                    {% if movie.wiki_page %}
+                        <a href="{{ movie.wiki_page }}" target="_blank" rel="noopener noreferrer">{{ movie.wiki_page }}</a>
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </p>
+
+                <h2>Plot</h2>
+                <p class="plot-text">{{ movie.plot or 'No plot available.' }}</p>
+            </section>
+        </div>
+    </div>
+    </div>
+</body>
+</html>
